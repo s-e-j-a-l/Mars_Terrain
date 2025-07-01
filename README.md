@@ -1,4 +1,4 @@
-#Mars_Terrain – Gazebo Simulation Environment for Safe Spot Detection
+##Mars_Terrain – Gazebo Simulation Environment for Safe Spot Detection
 
 This repository contains a custom-built Martian terrain simulation environment developed using Gazebo, ROS 2, and the ros-gz bridge. It is designed for testing and training autonomous drone models to perform safe landing spot detection and navigation in Martian-like conditions.
 
