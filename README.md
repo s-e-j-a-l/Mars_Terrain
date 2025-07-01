@@ -1,8 +1,8 @@
-##Mars_Terrain – Gazebo Simulation Environment for Safe Spot Detection
+# Mars_Terrain – Gazebo Simulation Environment for Safe Spot Detection
 
 This repository contains a custom-built Martian terrain simulation environment developed using Gazebo, ROS 2, and the ros-gz bridge. It is designed for testing and training autonomous drone models to perform safe landing spot detection and navigation in Martian-like conditions.
 
-#Features
+## Features
 
 - Custom Martian terrain world (`.sdf`) modeled with rocks, slopes, and varied elevation.
 - Integrated with ROS 2 Humble and Gazebo Fortress.
@@ -14,7 +14,7 @@ This repository contains a custom-built Martian terrain simulation environment d
   - Gravity settings
 - Supports ros-gz bridge for communication between ROS 2 and Gazebo.
 
-#Requirements
+## Requirements
 
 - ROS 2 Humble
 - Gazebo Fortress (Ignition Gazebo)
@@ -22,7 +22,7 @@ This repository contains a custom-built Martian terrain simulation environment d
 - colcon (for building ROS 2 packages)
 - Python 3.8+
 
-#How to Launch the Simulation
+## How to Launch the Simulation
 
 1. Clone the Repository:
     - git clone https://github.com/s-e-j-a-l/Mars_Terrain.git
@@ -35,7 +35,7 @@ This repository contains a custom-built Martian terrain simulation environment d
 3. Launch the Mars Terrain World:
     - ros2 launch launch/bridge.launch.py
  
-#Use Cases
+## Use Cases
 
 This simulation environment is designed for:
 Training RL models (e.g., Soft Actor-Critic) for landing decision-making.
