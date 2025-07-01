@@ -1,0 +1,372 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.8">
+  <world name="quadcopter_teleop">
+    <physics name="earth_physics" type="ode">
+      <gravity>0 0 -9.80665</gravity>  <!-- Earth gravity in m/s² -->
+      <real_time_update_rate>1000</real_time_update_rate> 
+      <max_step_size>0.001</max_step_size> 
+    </physics>
+
+
+    <!-- <physics name="4ms" type="ignored">
+      <max_step_size>0.004</max_step_size
+      <real_time_factor>1.0</real_time_factor>
+    </physics> -->
+
+    <atmosphere type="adiabatic">
+      <temperature>288.15</temperature> <!-- Earth's average surface temperature in Kelvin -->
+      <air_density>1.225</air_density>  <!-- Earth's atmospheric density in kg/m³ -->
+    </atmosphere>
+
+    <plugin
+      filename="ignition-gazebo-physics-system"
+      name="ignition::gazebo::systems::Physics">
+    </plugin>
+    <plugin
+      filename="ignition-gazebo-scene-broadcaster-system"
+      name="ignition::gazebo::systems::SceneBroadcaster">
+    </plugin>
+    <plugin
+      filename="ignition-gazebo-user-commands-system"
+      name="ignition::gazebo::systems::UserCommands">
+    </plugin>
+    <plugin
+      filename="ignition-gazebo-sensors-system"
+      name="ignition::gazebo::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    
+    <scene>
+      <grid>false</grid>
+    </scene>
+    
+    
+
+    <gui fullscreen="0">
+
+      <!-- 3D scene -->
+      <plugin filename="GzScene3D" name="3D View">
+        <ignition-gui>
+          <title>3D View</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="string" key="state">docked</property>
+        </ignition-gui>
+
+        <engine>ogre2</engine>
+        <scene>scene</scene>
+        <ambient_light>0.4 0.4 0.4</ambient_light>
+        <background_color>0.8 0.8 0.8</background_color>
+        <camera_follow>
+          <target>X3</target>
+          <p_gain>0.5</p_gain>
+          <offset>-3 0.5 1</offset>
+        </camera_follow>
+      </plugin>
+
+      <!-- World control -->
+      <plugin filename="WorldControl" name="World control">
+        <ignition-gui>
+          <title>World control</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">72</property>
+          <property type="double" key="width">121</property>
+          <property type="double" key="z">1</property>
+
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="left" target="left"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </ignition-gui>
+
+        <play_pause>true</play_pause>
+        <step>true</step>
+        <start_paused>false</start_paused>  <!-- This is the key line - must be false -->
+        <service>/world/quadcopter_teleop/control</service>
+        <stats_topic>/world/quadcopter_teleop/stats</stats_topic>
+      </plugin>
+
+      <!-- World statistics -->
+      <plugin filename="WorldStats" name="World stats">
+        <ignition-gui>
+          <title>World stats</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">110</property>
+          <property type="double" key="width">290</property>
+          <property type="double" key="z">1</property>
+
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="right" target="right"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </ignition-gui>
+
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+        <topic>/world/ros_gz/stats</topic>
+      </plugin>
+
+      <plugin filename="Teleop" name="Teleop">
+        <ignition-gui>
+          <property type="string" key="state">docked</property>
+        </ignition-gui>
+        <topic>/X3/cmd_vel</topic>
+      </plugin>
+      <plugin filename="ImageDisplay" name="Image Display">
+        <ignition-gui>
+          <property key="state" type="string">docked</property>
+        </ignition-gui>
+      </plugin>
+    </gui> 
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+        <include>
+      		<uri>file://home/ros-gazebo/anav_ws/src/martian_drone/worlds/models/Mars_Gale_Crater_Patch_2/model.sdf</uri>
+      		<pose>3 10 3 0 0 0</pose>
+        </include>
+        
+      <model name='X3'>
+             
+            <pose>3 10 4 0 0 0</pose>
+            <include merge='true'>
+                <name>X3</name>
+                <uri>file:///home/ros-gazebo/anav_ws/src/martian_drone/worlds/models/x3/model.sdf</uri>
+            </include>
+            <link name="depth_camera_link">
+              <pose>0 0 0 0 1.57 0</pose>
+              <inertial>
+                        <mass>0.01</mass>  
+                        <inertia>
+                            <ixx>0.00001</ixx>
+                            <iyy>0.00001</iyy>
+                            <izz>0.00001</izz>
+                        </inertia>
+              </inertial>
+
+              <velocity_decay>
+                <linear>0.8</linear>
+                <angular>0.8</angular>
+              </velocity_decay>
+
+              <sensor name="depth_camera" type="depth_camera">
+              	<pose>0 0.4 0.2 0 0 0</pose>
+                <camera>
+                  <horizontal_fov>1.047</horizontal_fov>
+                  <image>
+                    <width>320</width>
+                    <height>240</height>
+                    <format>R_FLOAT32</format>
+                  </image>
+                  <clip>
+                    <near>0.1</near>
+                    <far>100</far>
+                  </clip>
+                </camera>
+                <always_on>1</always_on>
+                <update_rate>10</update_rate>
+                <visualize>true</visualize>
+                <topic>depth_camera</topic>
+                <plugin
+                  filename="RosGzPointCloud"
+                  name="ros_gz_point_cloud::PointCloud">
+                  <topic>points</topic>
+                  <frame_id>X3/depth_camera_link/depth_camera</frame_id>
+                </plugin>
+              </sensor>
+
+
+              
+              
+              <sensor name="rgb_camera" type="camera">
+                  <pose>0 0 0 0 0 0</pose>  
+                  <camera>
+                      <horizontal_fov>1.047</horizontal_fov>
+                      <image>
+                          <width>320</width>
+                          <height>240</height>
+                          <format>R8G8B8</format>
+                      </image>
+                      <clip>
+                          <near>0.1</near>
+                          <far>100</far>
+                      </clip>
+                  </camera>
+                  <always_on>1</always_on>  
+                  <update_rate>10</update_rate>  
+                  <visualize>true</visualize>
+                  <topic>/rgb_camera</topic>
+
+                  <!-- ROS 2 Plugin for Image -->
+                  <plugin filename="libros_gz_image.so" name="ros_gz_image::Image">
+                      <topic>/camera/image_raw</topic>
+                      <frame_id>camera_frame</frame_id>
+                  </plugin>
+              </sensor>
+
+              <sensor name="imu_sensor" type="imu">
+                  <always_on>1</always_on>
+                  <update_rate>1</update_rate>
+                  <visualize>true</visualize>
+                  <topic>imu</topic>
+                  <plugin 
+                      filename="libignition-gazebo-imu-system.so"
+                      name="ignition::gazebo::systems::Imu">
+                      <topic>/imu</topic>
+                      <frame_id>imu_link</frame_id>
+                  </plugin>
+
+              </sensor>         
+            </link>
+  
+            <joint name="CameraJoint" type="fixed">
+                <parent>X3/base_link</parent>
+                <child>depth_camera_link</child>
+
+            </joint>
+
+            <plugin name="velocity_controller" filename="libros_gz_velocity_system.so">
+              <topic>/X3/cmd_vel</topic>
+            </plugin>
+
+
+            <plugin
+              filename="ignition-gazebo-multicopter-motor-model-system"
+              name="ignition::gazebo::systems::MulticopterMotorModel">
+              <robotNamespace>X3</robotNamespace>
+              <jointName>X3/rotor_0_joint</jointName>
+              <linkName>X3/rotor_0</linkName>
+              <turningDirection>ccw</turningDirection>
+              <timeConstantUp>0.0125</timeConstantUp>
+              <timeConstantDown>0.025</timeConstantDown>
+              <maxRotVelocity>800.0</maxRotVelocity>
+              <motorConstant>8.54858e-06</motorConstant>
+              <momentConstant>0.016</momentConstant>
+              <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+              <motorNumber>0</motorNumber>
+              <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+              <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+              <motorSpeedPubTopic>motor_speed/0</motorSpeedPubTopic>
+              <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+              <motorType>velocity</motorType>
+            </plugin>
+            <plugin
+              filename="ignition-gazebo-multicopter-motor-model-system"
+              name="ignition::gazebo::systems::MulticopterMotorModel">
+              <robotNamespace>X3</robotNamespace>
+              <jointName>X3/rotor_1_joint</jointName>
+              <linkName>X3/rotor_1</linkName>
+              <turningDirection>ccw</turningDirection>
+              <timeConstantUp>0.0125</timeConstantUp>
+              <timeConstantDown>0.025</timeConstantDown>
+              <maxRotVelocity>800.0</maxRotVelocity>
+              <motorConstant>8.54858e-06</motorConstant>
+              <momentConstant>0.016</momentConstant>
+              <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+              <motorNumber>1</motorNumber>
+              <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+              <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+              <motorSpeedPubTopic>motor_speed/1</motorSpeedPubTopic>
+              <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+              <motorType>velocity</motorType>
+            </plugin>
+            <plugin
+              filename="ignition-gazebo-multicopter-motor-model-system"
+              name="ignition::gazebo::systems::MulticopterMotorModel">
+              <robotNamespace>X3</robotNamespace>
+              <jointName>X3/rotor_2_joint</jointName>
+              <linkName>X3/rotor_2</linkName>
+              <turningDirection>cw</turningDirection>
+              <timeConstantUp>0.0125</timeConstantUp>
+              <timeConstantDown>0.025</timeConstantDown>
+              <maxRotVelocity>800.0</maxRotVelocity>
+              <motorConstant>8.54858e-06</motorConstant>
+              <momentConstant>0.016</momentConstant>
+              <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+              <motorNumber>2</motorNumber>
+              <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+              <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+              <motorSpeedPubTopic>motor_speed/2</motorSpeedPubTopic>
+              <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+              <motorType>velocity</motorType>
+            </plugin>
+            <plugin
+              filename="ignition-gazebo-multicopter-motor-model-system"
+              name="ignition::gazebo::systems::MulticopterMotorModel">
+              <robotNamespace>X3</robotNamespace>
+              <jointName>X3/rotor_3_joint</jointName>
+              <linkName>X3/rotor_3</linkName>
+              <turningDirection>cw</turningDirection>
+              <timeConstantUp>0.0125</timeConstantUp>
+              <timeConstantDown>0.025</timeConstantDown>
+              <maxRotVelocity>800.0</maxRotVelocity>
+              <motorConstant>8.54858e-06</motorConstant>
+              <momentConstant>0.016</momentConstant>
+              <commandSubTopic>gazebo/command/motor_speed</commandSubTopic>
+              <motorNumber>3</motorNumber>
+              <rotorDragCoefficient>8.06428e-05</rotorDragCoefficient>
+              <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+              <motorSpeedPubTopic>motor_speed/3</motorSpeedPubTopic>
+              <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+              <motorType>velocity</motorType>
+            </plugin>
+            <plugin
+              filename="ignition-gazebo-multicopter-control-system"
+              name="ignition::gazebo::systems::MulticopterVelocityControl">
+              <robotNamespace>X3</robotNamespace>
+              <commandSubTopic>cmd_vel</commandSubTopic>
+              <enableSubTopic>enable</enableSubTopic>
+              <comLinkName>X3/base_link</comLinkName>
+              <velocityGain>2.7 2.7 2.7</velocityGain>
+              <attitudeGain>2 3 0.15</attitudeGain>
+              <angularRateGain>0.4 0.52 0.18</angularRateGain>
+              <maximumLinearAcceleration>2 2 2</maximumLinearAcceleration>
+
+              <rotorConfiguration>
+                <rotor>
+                  <jointName>X3/rotor_0_joint</jointName>
+                  <forceConstant>8.54858e-06</forceConstant>
+                  <momentConstant>0.016</momentConstant>
+                  <direction>1</direction>
+                </rotor>
+                <rotor>
+                  <jointName>X3/rotor_1_joint</jointName>
+                  <forceConstant>8.54858e-06</forceConstant>
+                  <momentConstant>0.016</momentConstant>
+                  <direction>1</direction>
+                </rotor>
+                <rotor>
+                  <jointName>X3/rotor_2_joint</jointName>
+                  <forceConstant>8.54858e-06</forceConstant>
+                  <momentConstant>0.016</momentConstant>
+                  <direction>-1</direction>
+                </rotor>
+                <rotor>
+                  <jointName>X3/rotor_3_joint</jointName>
+                  <forceConstant>8.54858e-06</forceConstant>
+                  <momentConstant>0.016</momentConstant>
+                  <direction>-1</direction>
+                </rotor>
+              </rotorConfiguration>
+            </plugin>
+      </model> 
+  </world>
+</sdf>

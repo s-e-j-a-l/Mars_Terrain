@@ -1,0 +1,13 @@
+material Mars_Gale_Crater_Patch_2/rock_texture_1
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Rock029_1K_Color.png
+            }
+        }
+    }
+}
