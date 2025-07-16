@@ -42,7 +42,7 @@ Training RL models (e.g., Soft Actor-Critic) for landing decision-making.
 Testing safe spot detection using depth sensing and terrain analysis.
 Developing autonomous Martian exploration drones.
 
-![Mars Terrain Screenshot](models/Screenshot.png)
+![Mars Terrain Screenshot](worlds/Screenshot.png)
 
 
 
